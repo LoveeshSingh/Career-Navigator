@@ -55,3 +55,7 @@
 ## 11. Bounding the LLM explicitly to Structured JSON Generation
 - **Decision**: Restrict OpenAI endpoints solely to mapping validated skill gaps (`missingSkills`) into structural roadmaps cleanly. Use heavy prompts and exception fallbacks to forbid inference.
 - **Reason**: The risk of a generic LLM adding non-canonical skills or hallucinating training requirements creates unbound roadmaps useless to our DB's `SkillContent` linking standard. Keeping temperatures at `0.1` and throwing `RoadmapGenerationException` when an unknown String slips through the JSON parsing enforces deterministic integrity alongside creative roadmapping.
+
+## 12. Absolute Fallback Video Delegation
+- **Decision**: Eradicate total pipeline application failures explicitly by forcing custom `RoadmapGenerationException` triggers to immediately route requests into a predefined static PostgreSQL mechanism utilizing `FallbackService`.
+- **Reason**: We cannot guarantee 100% uptime on the generative LLM wrapper. Rather than rendering the entire Top-K matching execution path effectively useless upon an OpenAI 503 timeout, the backend must instantly pivot and serve highly correlated deterministic YouTube hyperlinks directly sourced from our database. Ensuring hierarchical fall-through constraints natively on the Java layer `Map->targetLevel || Map->BEGINNER` guarantees the user never gets an empty response.

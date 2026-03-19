@@ -57,7 +57,11 @@ The system executes one of two primary flows based on input:
   - Generates JSON structurally formatted as `{"week_X": ["skill_Y"]}`.
 - Parse payload via `ObjectMapper` and iterate map to validate NO hallucinated strings escaped system boundaries. If hallucinated sequences appear, throw `RoadmapGenerationException`.
 
-## 7. Fallback Logic (Video System - ONLY if LLM fails)
-- If the LLM integration encounters an error or timeout:
-  - For each missing skill, fetch a corresponding YouTube video from the Database based on user `level`.
-  - Return the list of fallback video URLs to the user instead of the LLM roadmap.
+## 7. Fallback Logic (`FallbackService`)
+- This layer functions exclusively as a circuit breaker. Normal operational flows bypass this completely.
+- If the LLM integration encounters an exception or timeout:
+  - Route the exact `missingSkills` array directly into the native PostgreSQL engine.
+  - For each missing skill, attempt a strict `Map` to `SkillContent` querying for the precise user `level`.
+  - Execute a hierarchical downgrade strategy: If "INTERMEDIATE" lacks a valid URL, immediately fallback natively to "BEGINNER". 
+  - Automatically wrap the resulting array of URL maps inside a highly constrained JSON wrapper (`{"mode": "fallback", "data": [{"skill": "java", "video": "https..."}]}`).
+  - Bubble this payload fully back to the downstream client to maintain frictionless operational uptime automatically substituting standard LLM roadmaps.
