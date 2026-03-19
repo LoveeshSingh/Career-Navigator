@@ -35,12 +35,14 @@ The system executes one of two primary flows based on input:
 - Use `skill.name` and the `SkillAlias` mapping table for dictionary lookups.
 - Keep ONLY skills present in the DB.
 
-## 4. Resume Matching (Deterministic)
-- **CRITICAL RESTRICTION**: Do not use NLP.
-- Normalize resume text (lowercase, tokenization, remove special characters).
+## 4. Resume Matching (Deterministic `ResumeMatchingService`)
+- **CRITICAL RESTRICTION**: Machine Learning / NLP models are entirely prohibited here to maintain exact matching limits. 
+- Input payload receives raw `resumeText` and explicitly truncated `topKSkills` arrays.
+- Normalize resume text (lowercase, compress spaces, strip all special characters except for contextual language symbols explicitly like `#`, `+`, or `.`).
+- Execute a solitary batch `SELECT ... WHERE skill_id IN (...)` against the `skill_alias` table for strict `O(1)` in-memory mapping boundaries.
 - For each validated Top K skill:
-  - Check if `skill.name` OR any alias from the `SkillAlias` table is present in the normalized resume text.
-  - Mark the skill as `present` or `missing`.
+  - Check if `skill.name` OR any mapped alias from the alias dictionary exists sequentially via strict word-boundary Regex string evaluation (i.e. `\bjava\b` prevents triggering true inside "JavaScript").
+  - Explicitly compartmentalize skills natively into `presentSkills` or `missingSkills` objects encapsulated within a `ResumeMatchResultDto`.
 
 ## 5. Gap Analysis
 - Calculate missing skills using exact set difference:

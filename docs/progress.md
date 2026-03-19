@@ -51,3 +51,9 @@
 - **Action**: Trashed legacy composite mappings natively decoupling `Skill` away from bidirectional reference loops internally. `Role` entity owns mapping to `RoleSkills`.
 - **Action**: Wrote `SkillSelectionService` to branch application flows efficiently: JD parsing logic sorts NLP values explicitly, while predefined DB role pathways skip math logic to parse native `priority` identifiers.
 - **Status**: Core Skill Selection Logic finalized.
+
+## Update: Resume Matching Engine Implementation
+- **Action**: Scaffolded deterministic validation class `ResumeMatchingService`.
+- **Action**: Embedded strict regex evaluation to parse explicit boundaries (`\b...`) over the custom-cleaned user strings protecting explicit entities (`c++`).
+- **Action**: Configured N+1 optimization mechanisms within JPA via custom `findBySkillIdIn()` batch requests.
+- **Status**: Extraction bounds and set difference calculators fully mapped into generic DTOs.

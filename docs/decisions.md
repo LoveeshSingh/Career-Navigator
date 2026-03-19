@@ -46,3 +46,8 @@
 - **Decision**: Cap skills shown to users via the `topK` parameter uniformly on both branch streams.
 - **Reason**: Overloading a user with 50 unorganized skills generates horrible roadmaps. Confining to `Math.min(top_k, max(20))` curates focus.
 - **Secondary Decision (Role Flow Constraints)**: The explicit Predefined Role Flow strictly skips NLP dynamic ranking and relies on our seeded `RoleSkills.priority` integer ordering. This proves stability and human-approved hierarchy over algorithmic guesses for static paths.
+
+## 10. Pure Regex Deterministic Resume Matching (Anti-NLP bounds)
+- **Decision**: Avoid NLP frameworks completely during the Resume cross-referencing phase in favor of basic memory boundary RegExp iterations `(\b...\b)`.
+- **Current Status**: Implemented strictly via `ResumeMatchingService`.
+- **Reason**: NLP Models are notoriously "fuzzy." Utilizing an NLP layer on resumes introduces variable results depending on sentence structure (e.g. false positives like "I want to learn java"). By enforcing direct word boundary matching on known database aliases in O(1) loop evaluations, we retain perfect mathematical intersection bounds for sets. Every "missing" skill generated is objectively unlocated within the text string.
