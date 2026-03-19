@@ -65,3 +65,12 @@ The system executes one of two primary flows based on input:
   - Execute a hierarchical downgrade strategy: If "INTERMEDIATE" lacks a valid URL, immediately fallback natively to "BEGINNER". 
   - Automatically wrap the resulting array of URL maps inside a highly constrained JSON wrapper (`{"mode": "fallback", "data": [{"skill": "java", "video": "https..."}]}`).
   - Bubble this payload fully back to the downstream client to maintain frictionless operational uptime automatically substituting standard LLM roadmaps.
+
+## 8. Master Endpoint Orchestrator (`RoadmapController`)
+- Evaluates native DTO logic asserting parameters (`top_k`).
+- Linearly stacks execution sequences sequentially:
+  - Validates constraints -> Triggers Branch A / Branch B depending on context.
+  - Passes aggregated canonical skill objects into `ResumeMatchingService`.
+  - Maps missing constraints against LLM mappings safely within `try/catch` enclosures.
+  - Throws custom configurations bounding standard `RoadmapGenerationException` payloads vertically into the `FallbackService`.
+  - Returns generalized `RoadmapResponseDto` universally back to the user bridging both modes dynamically.
