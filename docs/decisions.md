@@ -21,3 +21,8 @@
 - **Reason**: We require maximum read performance for deterministic matching. Searching for an exact string within a massive list of normalized resume tokens against a B-Tree indexed `alias_name` column is highly optimized in PostgreSQL. JSONB array containment queries are less efficient for this specific high-volume intersection math.
 - **Decision**: Use `RoleSkills` as a junction table.
 - **Reason**: Standard 3NF mapping to support many-to-many relationships, ensuring "Python" can be reused across multiple roles while maintaining role-specific priority mapping.
+
+## 5. Pre-Seeded Database Necessity
+- **Decision**: Deploy initial application state via a dedicated `DataSeeder` (CommandLineRunner).
+- **Current Status**: Adopting immediately.
+- **Reason**: The system is completely deterministic and relies entirely on having a "source of truth" to validate dynamic job extraction and fallback logic. Bootstrapping raw data (e.g., `Backend Developer` role, associated dictionary of 10 skills with aliases, and YouTube fallback videos) is required so the application is functional directly out-of-the-box for core path execution and error fallbacks.

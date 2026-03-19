@@ -28,3 +28,9 @@
 - **Action**: Wired PostgreSQL driver and configured `application.properties`.
 - **Action**: Implemented structural JPA Entities (`Skill`, `SkillAlias`, `Role`, `RoleSkills`, `SkillContent`) mapping the robust schema and enforced table keys/constraints. Setup base Spring Data REST Repository interfaces.
 - **Status**: Backend Data/JPA layer initialized.
+
+## Update: Initial Data Seeding
+- **Action**: Added `score` column to `Skill` table for fallback prioritization.
+- **Action**: Created `DataSeeder.java` (CommandLineRunner) to bootstrap the `Backend Developer` role.
+- **Action**: Seeded 10 core skills (Java, Spring Boot, etc.), 30+ normalized aliases, and matched fallback YouTube videos into `SkillContent`. Linked everything relationally via `RoleSkills`.
+- **Status**: Database seeded properly.

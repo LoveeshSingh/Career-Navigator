@@ -25,6 +25,10 @@ public class Skill {
     @Column(name = "name", length = 100, nullable = false, unique = true)
     private String name;
 
+    @Column(name = "score", nullable = false)
+    @Builder.Default
+    private Integer score = 0; // For fallback usage only
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

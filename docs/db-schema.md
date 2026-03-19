@@ -9,6 +9,7 @@ This schema is designed for PostgreSQL to support the deterministic skill matchi
 The core dictionary of master skills.
 - `id` (UUID) - Primary Key
 - `name` (VARCHAR(100)) - Unique, NOT NULL. The canonical, normalized name of the skill (e.g., "reactjs").
+- `score` (INT) - NOT NULL. Used for fallback metrics.
 - `created_at` (TIMESTAMP) - NOT NULL, default CURRENT_TIMESTAMP.
 - *Constraints*: `UNIQUE(name)`
 
@@ -67,3 +68,10 @@ Fallback learning resources (previously `learning_resources`), linked to skills 
   - `Role` ↔ `RoleSkills`: `@OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)`
 - **Composite Keys**: `RoleSkills` utilizes an `@EmbeddedId` mapped to `RoleSkillsId` handling the many-to-many junction properties properly.
 - **Naming Constraints**: Java fields follow `camelCase` which Hibernate transforms into standard PostgreSQL `snake_case`. All entities use exact `@Table(name="...")` and logical column sizing via `@Column(length=X, nullable=false, unique=true)`.
+
+## Sample Data Structure
+The application employs a `CommandLineRunner` for initial bootstrapping ensuring strict consistency:
+- **Role**: `Backend Developer`
+- **Core Skills**: `java`, `spring boot`, `postgresql`, `docker`, `kubernetes`, `rest api`, `microservices`, `git`, `redis`, `aws`.
+- **Normalization**: Each skill seeds 2-4 lowercase string aliases directly appended into `SkillAlias`.
+- **Fallback Videos**: Automatic generation of `BEGINNER` and `INTERMEDIATE` YouTube query links mapping precisely to each skill in `SkillContent`.
