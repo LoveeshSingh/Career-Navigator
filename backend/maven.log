@@ -1,0 +1,49 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< com.skillbridge:career-navigator >------------------
+[INFO] Building  0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ career-navigator ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ career-navigator ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 28 source files with javac [debug parameters release 17] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/Users/Divyasha Singh/Desktop/JAVA Backend/career-navigator/backend/src/main/java/com/skillbridge/career_navigator/service/RoadmapGenerationService.java:[3,39] package com.fasterxml.jackson.core.type does not exist
+[ERROR] /C:/Users/Divyasha Singh/Desktop/JAVA Backend/career-navigator/backend/src/main/java/com/skillbridge/career_navigator/service/RoadmapGenerationService.java:[4,38] package com.fasterxml.jackson.databind does not exist
+[ERROR] /C:/Users/Divyasha Singh/Desktop/JAVA Backend/career-navigator/backend/src/main/java/com/skillbridge/career_navigator/service/RoadmapGenerationService.java:[25,19] cannot find symbol
+  symbol:   class ObjectMapper
+  location: class com.skillbridge.career_navigator.service.RoadmapGenerationService
+[ERROR] /C:/Users/Divyasha Singh/Desktop/JAVA Backend/career-navigator/backend/src/main/java/com/skillbridge/career_navigator/service/RoadmapGenerationService.java:[33,37] cannot find symbol
+  symbol:   class ObjectMapper
+  location: class com.skillbridge.career_navigator.service.RoadmapGenerationService
+[INFO] 4 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  6.817 s
+[INFO] Finished at: 2026-03-19T16:19:37+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.14.1:compile (default-compile) on project career-navigator: Compilation failure: Compilation failure: 
+[ERROR] /C:/Users/Divyasha Singh/Desktop/JAVA Backend/career-navigator/backend/src/main/java/com/skillbridge/career_navigator/service/RoadmapGenerationService.java:[3,39] package com.fasterxml.jackson.core.type does not exist
+[ERROR] /C:/Users/Divyasha Singh/Desktop/JAVA Backend/career-navigator/backend/src/main/java/com/skillbridge/career_navigator/service/RoadmapGenerationService.java:[4,38] package com.fasterxml.jackson.databind does not exist
+[ERROR] /C:/Users/Divyasha Singh/Desktop/JAVA Backend/career-navigator/backend/src/main/java/com/skillbridge/career_navigator/service/RoadmapGenerationService.java:[25,19] cannot find symbol
+[ERROR]   symbol:   class ObjectMapper
+[ERROR]   location: class com.skillbridge.career_navigator.service.RoadmapGenerationService
+[ERROR] /C:/Users/Divyasha Singh/Desktop/JAVA Backend/career-navigator/backend/src/main/java/com/skillbridge/career_navigator/service/RoadmapGenerationService.java:[33,37] cannot find symbol
+[ERROR]   symbol:   class ObjectMapper
+[ERROR]   location: class com.skillbridge.career_navigator.service.RoadmapGenerationService
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

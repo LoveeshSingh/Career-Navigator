@@ -1,0 +1,21 @@
+18:[ERROR] COMPILATION ERROR : 
+20:[ERROR] /C:/Users/Divyasha Singh/Desktop/JAVA Backend/career-navigator/backend/src/main/java/com/skillbridge/career_navigator/controller/RoadmapController.java:[92,47] Alternatives in a multi-catch statement cannot be related by subclassing
+22:[ERROR] /C:/Users/Divyasha Singh/Desktop/JAVA Backend/career-navigator/backend/src/main/java/com/skillbridge/career_navigator/service/NlpSkillExtractionService.java:[68,13] cannot find symbol
+25:[ERROR] /C:/Users/Divyasha Singh/Desktop/JAVA Backend/career-navigator/backend/src/main/java/com/skillbridge/career_navigator/service/NlpSkillExtractionService.java:[71,13] cannot find symbol
+28:[INFO] 3 errors 
+36:[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.14.1:compile (default-compile) on project career-navigator: Compilation failure: Compilation failure: 
+37:[ERROR] /C:/Users/Divyasha Singh/Desktop/JAVA Backend/career-navigator/backend/src/main/java/com/skillbridge/career_navigator/controller/RoadmapController.java:[92,47] Alternatives in a multi-catch statement cannot be related by subclassing
+38:[ERROR]   Alternative com.skillbridge.career_navigator.exception.RoadmapGenerationException is a subclass of alternative java.lang.RuntimeException
+39:[ERROR] /C:/Users/Divyasha Singh/Desktop/JAVA Backend/career-navigator/backend/src/main/java/com/skillbridge/career_navigator/service/NlpSkillExtractionService.java:[68,13] cannot find symbol
+40:[ERROR]   symbol:   variable log
+41:[ERROR]   location: class com.skillbridge.career_navigator.service.NlpSkillExtractionService
+42:[ERROR] /C:/Users/Divyasha Singh/Desktop/JAVA Backend/career-navigator/backend/src/main/java/com/skillbridge/career_navigator/service/NlpSkillExtractionService.java:[71,13] cannot find symbol
+43:[ERROR]   symbol:   variable log
+44:[ERROR]   location: class com.skillbridge.career_navigator.service.NlpSkillExtractionService
+45:[ERROR] -> [Help 1]
+46:[ERROR] 
+47:[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+48:[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+49:[ERROR] 
+50:[ERROR] For more information about the errors and possible solutions, please read the following articles:
+51:[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
