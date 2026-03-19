@@ -34,3 +34,9 @@
 - **Action**: Created `DataSeeder.java` (CommandLineRunner) to bootstrap the `Backend Developer` role.
 - **Action**: Seeded 10 core skills (Java, Spring Boot, etc.), 30+ normalized aliases, and matched fallback YouTube videos into `SkillContent`. Linked everything relationally via `RoleSkills`.
 - **Status**: Database seeded properly.
+
+## Update: NLP Integration Setup
+- **Action**: Populated `application.properties` with remote NLP endpoint properties (`nlp.api.url`/`nlp.api.key`).
+- **Action**: Built the Java backend wrapper (`NlpSkillExtractionService`) relying on `RestTemplate` to ping external NLP providers natively.
+- **Action**: Enforced data mapping boundaries via `ExtractedSkillDto` and bounded HTTP error tracking using `NlpExtractionException`.
+- **Status**: NLP Extraction scaffolding complete.

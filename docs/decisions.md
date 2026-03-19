@@ -26,3 +26,9 @@
 - **Decision**: Deploy initial application state via a dedicated `DataSeeder` (CommandLineRunner).
 - **Current Status**: Adopting immediately.
 - **Reason**: The system is completely deterministic and relies entirely on having a "source of truth" to validate dynamic job extraction and fallback logic. Bootstrapping raw data (e.g., `Backend Developer` role, associated dictionary of 10 skills with aliases, and YouTube fallback videos) is required so the application is functional directly out-of-the-box for core path execution and error fallbacks.
+
+## 6. External NLP Usage for Extraction
+- **Decision**: Delegate Job Description text-to-skill extraction entirely to an external NLP SDK/API.
+- **Current Status**: Adopting immediately.
+- **Reason**: Unstructured text parsing from JDs requires massive domain context. Specialized external NLP engines are better equipped to extract raw context safely, allowing the backend to remain laser-focused on deterministic mapping.
+- **Constraint**: The NLP service (`NlpSkillExtractionService`) acts as a pure translator. It parses JSON HTTP responses into `ExtractedSkillDto`, applies basic string normalization (trim/lowercase), and throws `NlpExtractionException` on failure. It intentionally lacks database validation logic to enforce single-responsibility boundaries.

@@ -12,8 +12,10 @@ User provides:
 The system executes one of two primary flows based on input:
 
 ### Branch A: JD Flow (Primary)
-- Send the raw JD text to the external NLP API.
-- The NLP API extracts and ranks skills by importance.
+- Send the raw JD text to the external NLP API via the `NlpSkillExtractionService` (`RestTemplate`).
+- Handle immediate network constraints (Timeout, Missing Payload) by throwing `NlpExtractionException`.
+- Parse valid API responses into `ExtractedSkillDto` objects containing a normalized `skillName` and `importanceScore`.
+- Filter out empty extractions and sort the List purely by highest to lowest `importanceScore`.
 - Select the first `k` skills from the ranking.
 
 ### Branch B: Role Flow
