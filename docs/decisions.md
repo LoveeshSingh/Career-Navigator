@@ -51,3 +51,7 @@
 - **Decision**: Avoid NLP frameworks completely during the Resume cross-referencing phase in favor of basic memory boundary RegExp iterations `(\b...\b)`.
 - **Current Status**: Implemented strictly via `ResumeMatchingService`.
 - **Reason**: NLP Models are notoriously "fuzzy." Utilizing an NLP layer on resumes introduces variable results depending on sentence structure (e.g. false positives like "I want to learn java"). By enforcing direct word boundary matching on known database aliases in O(1) loop evaluations, we retain perfect mathematical intersection bounds for sets. Every "missing" skill generated is objectively unlocated within the text string.
+
+## 11. Bounding the LLM explicitly to Structured JSON Generation
+- **Decision**: Restrict OpenAI endpoints solely to mapping validated skill gaps (`missingSkills`) into structural roadmaps cleanly. Use heavy prompts and exception fallbacks to forbid inference.
+- **Reason**: The risk of a generic LLM adding non-canonical skills or hallucinating training requirements creates unbound roadmaps useless to our DB's `SkillContent` linking standard. Keeping temperatures at `0.1` and throwing `RoadmapGenerationException` when an unknown String slips through the JSON parsing enforces deterministic integrity alongside creative roadmapping.

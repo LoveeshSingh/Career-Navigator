@@ -57,3 +57,9 @@
 - **Action**: Embedded strict regex evaluation to parse explicit boundaries (`\b...`) over the custom-cleaned user strings protecting explicit entities (`c++`).
 - **Action**: Configured N+1 optimization mechanisms within JPA via custom `findBySkillIdIn()` batch requests.
 - **Status**: Extraction bounds and set difference calculators fully mapped into generic DTOs.
+
+## Update: LLM Roadmap Generation
+- **Action**: Injected OpenAI HTTP properties via `application.properties`.
+- **Action**: Bootstrapped `RoadmapGenerationService` forcing OpenAI endpoints into standard JSON schema mode. Wrote rigid post-completion string scanners evaluating output datasets against input datasets securely.
+- **Action**: Hardened system via custom `RoadmapGenerationException` wrapper to guarantee fallback triggering.
+- **Status**: Foundational LLM roadmapping pipeline finished.

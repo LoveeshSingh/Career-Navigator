@@ -48,13 +48,14 @@ The system executes one of two primary flows based on input:
 - Calculate missing skills using exact set difference:
   `missing_skills = topK_skills - present_skills`
 
-## 6. Roadmap Generation (LLM)
-- Build a prompt containing strictly the `missing_skills`, user `level`, and `hours_per_week`.
-- Send to LLM to generate a learning roadmap.
-- **LLM Constraints**:
-  - Must NOT add new skills.
-  - Must NOT infer implied skills.
-  - Must NOT perform parsing/extraction.
+## 6. Roadmap Generation (LLM `RoadmapGenerationService`)
+- Execute `generateRoadmap()` wrapping `missingSkills`, `level`, and `hours_per_week` into a structured prompt schema.
+- Request explicit JSON mappings representing a weekly roadmap allocation.
+- **LLM Constraints (Critical Firewall)**:
+  - Must NOT add new skills beyond the `missingSkills` array parameter.
+  - Must NOT omit provided skills.
+  - Generates JSON structurally formatted as `{"week_X": ["skill_Y"]}`.
+- Parse payload via `ObjectMapper` and iterate map to validate NO hallucinated strings escaped system boundaries. If hallucinated sequences appear, throw `RoadmapGenerationException`.
 
 ## 7. Fallback Logic (Video System - ONLY if LLM fails)
 - If the LLM integration encounters an error or timeout:
