@@ -4,7 +4,7 @@
 The system is an AI Skill Gap Analyzer & Roadmap Generator, architected to be a production-grade backend-driven application. It enforces deterministic resume matching and limits LLM usage purely to learning roadmap generation.
 
 ## Components
-- **Backend**: Spring Boot (Java) - Handles business logic, NLP API orchestration, matching engine, and LLM calls.
+- **Backend (Spring Boot Java)**: Handles business logic, NLP orchestration, and matching engine. Includes a JPA Entity Layer modeling the entire PostgreSQL database natively with full constraints and cascading behaviors.
 - **Frontend**: React + Tailwind - User interface for inputting profiles and displaying the final roadmap/video fallbacks.
 - **Database**: PostgreSQL - The absolute source of truth for all predefined skills, roles, and fallback learning resources.
 

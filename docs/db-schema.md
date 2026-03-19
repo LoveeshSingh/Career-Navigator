@@ -58,3 +58,12 @@ Fallback learning resources (previously `learning_resources`), linked to skills 
 - **Normalization (Many-to-One Aliases)**: Extracted aliases into a dedicated `SkillAlias` table instead of a JSONB column. *Why*: Relational rows allow for efficient, indexed exact-string searches across millions of resumes, which is significantly faster and more standard in SQL than querying inside JSONB arrays.
 - **Normalization (Many-to-Many Roles)**: `RoleSkills` is a strict associative mapping table. *Why*: Roles and skills exist independently; a single skill like "Python" can belong to Data Scientist, Backend Engineer, and DevOps roles with different priorities. 
 - **Duplicate Skills**: `UNIQUE(name)` ensures that duplicate canonical skills cannot be inserted, centralizing all variations into the `SkillAlias` table.
+
+## Implementation Details (JPA/Hibernate)
+- **Primary Keys**: Configured using `@GeneratedValue(strategy = GenerationType.UUID)` to enable robust distributed setups.
+- **Relationships**:
+  - `Skill` ↔ `SkillAlias`: `@OneToMany(mappedBy = "skill", cascade = CascadeType.ALL, orphanRemoval = true)`
+  - `Skill` ↔ `SkillContent`: `@OneToMany(mappedBy = "skill", cascade = CascadeType.ALL, orphanRemoval = true)`
+  - `Role` ↔ `RoleSkills`: `@OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)`
+- **Composite Keys**: `RoleSkills` utilizes an `@EmbeddedId` mapped to `RoleSkillsId` handling the many-to-many junction properties properly.
+- **Naming Constraints**: Java fields follow `camelCase` which Hibernate transforms into standard PostgreSQL `snake_case`. All entities use exact `@Table(name="...")` and logical column sizing via `@Column(length=X, nullable=false, unique=true)`.

@@ -22,3 +22,9 @@
 - **Action**: Defined strict fields, types, constraints, indexing strategies, and normalization for `Skill`, `SkillAlias`, `Role`, `RoleSkills`, and `SkillContent`.
 - **Action**: Updated `decisions.md` and `flow.md` to reflect the transition from JSONB aliases to a dedicated 3NF `SkillAlias` table.
 - **Status**: Database documentation finalized.
+
+## Update: Backend Project Structure Initialization
+- **Action**: Re-organized root Spring Boot boilerplate into isolated `/backend` directory.
+- **Action**: Wired PostgreSQL driver and configured `application.properties`.
+- **Action**: Implemented structural JPA Entities (`Skill`, `SkillAlias`, `Role`, `RoleSkills`, `SkillContent`) mapping the robust schema and enforced table keys/constraints. Setup base Spring Data REST Repository interfaces.
+- **Status**: Backend Data/JPA layer initialized.
