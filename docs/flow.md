@@ -23,14 +23,14 @@ The system executes one of two primary flows based on input:
 
 ## 3. Skill Validation
 - For each Top K skill, validate its presence in the DB.
-- Use `skill.name` and `skill.aliases` for dictionary lookups.
+- Use `skill.name` and the `SkillAlias` mapping table for dictionary lookups.
 - Keep ONLY skills present in the DB.
 
 ## 4. Resume Matching (Deterministic)
 - **CRITICAL RESTRICTION**: Do not use NLP.
 - Normalize resume text (lowercase, tokenization, remove special characters).
 - For each validated Top K skill:
-  - Check if `skill.name` OR any alias from `skill.aliases` is present in the normalized resume text.
+  - Check if `skill.name` OR any alias from the `SkillAlias` table is present in the normalized resume text.
   - Mark the skill as `present` or `missing`.
 
 ## 5. Gap Analysis

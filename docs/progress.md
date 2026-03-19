@@ -16,3 +16,9 @@
 - **Action**: Resolved accidental home directory push by isolating the git repository to the `career-navigator` folder.
 - **Action**: Force-pushed the correct documentation files to overwrite the remote state.
 - **Status**: Repository scope correctly isolated. Sync complete.
+
+## Update: Database Schema Finalization
+- **Action**: Converted draft schema into production-ready `db-schema.md`.
+- **Action**: Defined strict fields, types, constraints, indexing strategies, and normalization for `Skill`, `SkillAlias`, `Role`, `RoleSkills`, and `SkillContent`.
+- **Action**: Updated `decisions.md` and `flow.md` to reflect the transition from JSONB aliases to a dedicated 3NF `SkillAlias` table.
+- **Status**: Database documentation finalized.

@@ -14,3 +14,10 @@
 - **Decision**: Fallback resource extraction (YouTube links from DB) is completely divorced from the main Roadmap calculation flow.
 - **Current Status**: Adopting immediately.
 - **Reason**: Internal scoring/resource fetching is a worst-case scenario. It should never pollute the Top K selection or Gap Analysis, preserving single-responsibility workflows.
+
+## 4. Normalization and Relational Schema Design
+- **Decision**: Break out `SkillAlias` into a dedicated table rather than storing aliases as a JSONB array.
+- **Current Status**: Adopting immediately.
+- **Reason**: We require maximum read performance for deterministic matching. Searching for an exact string within a massive list of normalized resume tokens against a B-Tree indexed `alias_name` column is highly optimized in PostgreSQL. JSONB array containment queries are less efficient for this specific high-volume intersection math.
+- **Decision**: Use `RoleSkills` as a junction table.
+- **Reason**: Standard 3NF mapping to support many-to-many relationships, ensuring "Python" can be reused across multiple roles while maintaining role-specific priority mapping.
