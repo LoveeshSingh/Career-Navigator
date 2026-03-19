@@ -90,7 +90,7 @@ public class RoadmapController {
 
         // 5. Generative LLM Execution bounded by catch blocks
         try {
-            Map<String, List<String>> llmRoadmap = roadmapGenerationService.generateRoadmap(missingSkills, level, hoursPerWeek);
+            Map<String, Object> llmRoadmap = roadmapGenerationService.generateRoadmap(missingSkills, level, hoursPerWeek);
             
             return ResponseEntity.ok(RoadmapResponseDto.builder()
                     .mode("ai")

@@ -31,10 +31,10 @@ public class JDParsingService {
             return Collections.emptyList();
         }
 
-        // 1. Normalize and split JD into lines
-        String[] lines = jdText.split("\\n");
-        List<String> normalizedLines = Arrays.stream(lines)
-                .map(TextNormalizationUtils::normalizeText)
+        // 1. Normalize and split JD into lines/sentences
+        String[] chunks = jdText.split("\\n|\\.\\s+");
+        List<String> normalizedLines = Arrays.stream(chunks)
+                .map(String::trim)
                 .filter(line -> !line.isEmpty())
                 .collect(Collectors.toList());
 
@@ -85,7 +85,10 @@ public class JDParsingService {
             }
 
             if (score > 0) {
-                skillScores.put(skill.getId(), score);
+                // Add base score from DB as a minor factor (normalized to 0.1-1.0 range or just raw)
+                // This acts as a tie-breaker for skills with same keyword/frequency importance
+                double finalScore = score + (skill.getScore() / 1000.0);
+                skillScores.put(skill.getId(), finalScore);
             }
         }
 

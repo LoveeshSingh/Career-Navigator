@@ -3,20 +3,21 @@ package com.skillbridge.careernavigator.service;
 import com.skillbridge.careernavigator.dto.FallbackDataDto;
 import com.skillbridge.careernavigator.dto.FallbackResponseDto;
 import com.skillbridge.careernavigator.entity.Skill;
-import com.skillbridge.careernavigator.entity.SkillContent;
+import com.skillbridge.careernavigator.repository.SkillRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class FallbackService {
+
+    private final SkillRepository skillRepository;
 
     /**
      * Executes the absolute fallback circuit. Called explicitly only when LLM pipelines time out or hallucinate.
@@ -24,7 +25,7 @@ public class FallbackService {
      */
     @Transactional(readOnly = true)
     public FallbackResponseDto generateFallbackRoadmap(List<Skill> missingSkills, String level) {
-        log.warn("FALLBACK CIRCUIT BREAKER TRIPPED! Routing {} missing skills to predefined SQL mappings at level: {}", 
+        log.warn("FALLBACK CIRCUIT BREAKER TRIPPED! Routing {} missing skills to dynamic YouTube searches at level: {}", 
                  missingSkills != null ? missingSkills.size() : 0, level);
 
         if (missingSkills == null || missingSkills.isEmpty()) {
@@ -35,11 +36,11 @@ public class FallbackService {
         String normalizedTargetLevel = normalizeLevel(level);
 
         for (Skill skill : missingSkills) {
-            String bestVideoUrl = findBestVideoMatch(skill, normalizedTargetLevel);
+            String dynamicSearchUrl = generateDynamicSearchUrl(skill.getName(), normalizedTargetLevel);
             
             FallbackDataDto dataDto = FallbackDataDto.builder()
                     .skill(skill.getName())
-                    .video(bestVideoUrl)
+                    .video(dynamicSearchUrl)
                     .build();
                     
             dataList.add(dataDto);
@@ -52,36 +53,12 @@ public class FallbackService {
     }
 
     /**
-     * Safely locates the tightest targeted video content bound to the required level.
-     * Falls back to "BEGINNER" automatically if the requested string is completely empty or undefined on the DB entity.
+     * Constructs a dynamic YouTube search URL based on skill name and targeted level.
+     * This replaces the need for static database entries for every skill/level pair.
      */
-    private String findBestVideoMatch(Skill skill, String targetLevel) {
-        List<SkillContent> contents = skill.getContents();
-        if (contents == null || contents.isEmpty()) {
-            // Absolute native fallback if database admin omitted video insertion during seeding
-            return "https://youtube.com/results?search_query=" + skill.getName().replace(" ", "+") + "+tutorial";
-        }
-
-        // 1. Attempt exact match against requested level
-        Optional<SkillContent> exactMatch = contents.stream()
-                .filter(c -> normalizeLevel(c.getLevel()).equals(targetLevel))
-                .findFirst();
-                
-        if (exactMatch.isPresent()) {
-            return exactMatch.get().getUrl();
-        }
-
-        // 2. Cascade down to "BEGINNER" explicitly
-        Optional<SkillContent> basicFallback = contents.stream()
-                .filter(c -> normalizeLevel(c.getLevel()).equals("beginner"))
-                .findFirst();
-                
-        if (basicFallback.isPresent()) {
-            return basicFallback.get().getUrl();
-        }
-
-        // 3. Complete system trapdoor: Give them whatever exists first.
-        return contents.get(0).getUrl();
+    private String generateDynamicSearchUrl(String skillName, String level) {
+        String query = skillName.replace(" ", "+") + "+for+" + level;
+        return "https://www.youtube.com/results?search_query=" + query;
     }
 
     private String normalizeLevel(String level) {
