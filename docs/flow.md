@@ -16,7 +16,13 @@ The system executes one of two primary flows based on input:
 - Handle immediate network constraints (Timeout, Missing Payload) by throwing `NlpExtractionException`.
 - Parse valid API responses into `ExtractedSkillDto` objects containing a normalized `skillName` and `importanceScore`.
 - Filter out empty extractions and sort the List purely by highest to lowest `importanceScore`.
-- Select the first `k` skills from the ranking.
+- **Validation Step**: Pass the generic `ExtractedSkillDto` list into `SkillValidationService`.
+  - Normalize text (lowercase, alphanumeric).
+  - Search PostgreSQL: Exact match on `Skill.name`, fallback to `SkillAlias.alias_name`.
+  - Discard terms with no DB match.
+  - Dedup aliases resolving to the same canonical `Skill` entity.
+  - Return bounded `ValidatedSkillDto` preserving the original NLP importance score.
+- Select the first `k` skills from the validated ranking.
 
 ### Branch B: Role Flow
 - Fetch predefined skills mapped to the `role` from the Database (max 20).

@@ -40,3 +40,9 @@
 - **Action**: Built the Java backend wrapper (`NlpSkillExtractionService`) relying on `RestTemplate` to ping external NLP providers natively.
 - **Action**: Enforced data mapping boundaries via `ExtractedSkillDto` and bounded HTTP error tracking using `NlpExtractionException`.
 - **Status**: NLP Extraction scaffolding complete.
+
+## Update: Skill Validation Layer Implementation
+- **Action**: Built `SkillValidationService` to intercept raw NLP outputs.
+- **Action**: Enforced strong consistency by querying the Database. Skills are resolved explicitly via `Skill.name` first, checking `SkillAlias.alias_name` dynamically upon failure.
+- **Action**: Handled normalization (lowercase/alphanumeric formatting) and deduplication (preventing dual aliases from producing dual master skills).
+- **Status**: Backend validation bridging complete. NLP terms can now safely integrate with the PostgreSQL dictionary.

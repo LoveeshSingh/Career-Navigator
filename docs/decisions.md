@@ -32,3 +32,8 @@
 - **Current Status**: Adopting immediately.
 - **Reason**: Unstructured text parsing from JDs requires massive domain context. Specialized external NLP engines are better equipped to extract raw context safely, allowing the backend to remain laser-focused on deterministic mapping.
 - **Constraint**: The NLP service (`NlpSkillExtractionService`) acts as a pure translator. It parses JSON HTTP responses into `ExtractedSkillDto`, applies basic string normalization (trim/lowercase), and throws `NlpExtractionException` on failure. It intentionally lacks database validation logic to enforce single-responsibility boundaries.
+
+## 7. Database as Absolute Truth for Validation
+- **Decision**: The PostgreSQL database strictly determines what skills move forward into the matching engine.
+- **Current Status**: Adopting immediately.
+- **Reason**: NLP APIs hallucinate strings or extract highly-niche, un-teachable jargon (e.g. "team player", "proactive"). By funneling the raw API outputs into a `SkillValidationService` that demands an exact match in the `Skill` or `SkillAlias` tables, we ensure that every skill presented to the user has a canonical learning path and fallback video associated with it. Any extraction failing this check is silently discarded.
