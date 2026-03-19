@@ -41,8 +41,4 @@ public class Skill {
     @Builder.Default
     private List<SkillContent> contents = new ArrayList<>();
 
-    @OneToMany(mappedBy = "skill", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<RoleSkills> roleSkills = new ArrayList<>();
-
 }

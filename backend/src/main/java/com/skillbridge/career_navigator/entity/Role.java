@@ -29,7 +29,9 @@ public class Role {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "role_id")
+    @OrderBy("priority ASC")
     @Builder.Default
     private List<RoleSkills> roleSkills = new ArrayList<>();
 }

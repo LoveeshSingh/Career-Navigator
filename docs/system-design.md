@@ -11,8 +11,9 @@ The system is an AI Skill Gap Analyzer & Roadmap Generator, architected to be a 
 ## Core Modules To Implement
 1. **Skill Registry (PostgreSQL)**: Stores valid skills, aliases, roles, and fallback videos.
 2. **NLP API Integration (JD only)**: Uses `NlpSkillExtractionService` to hit an external endpoint. It purely handles the HTTP connection, payload parsing, sorting `ExtractedSkillDto` objects by score, and bubbling up network exceptions. It performs zero business validation against the registry.
-3. **Top K Selector**: Selects the top `k` most important skills (either from NLP API ranking for JD or DB priority for roles).
-4. **Skill Validation Layer**: Validates skills extracted by the NLP API against the Skill Registry. Discards any skill not found in DB.
+3. **Top K Selection Layer** (`SkillSelectionService`): Truncates the valid skill arrays into focused learning bounds.
+   - For JD Flow: Dynamically sorts mapped API scores descending, plucking the top `K`.
+   - For Role Flow: Defers entirely to the native predefined `RoleSkills.priority` sequence stored in the PostgreSQL registry up to `K`.
 5. **Resume Matching Engine**: A 100% deterministic text matching component. It normalizes resume text and checks for the exact presence of `skill.name` or `skill.aliases` for the Top K skills.
 6. **Missing Skill Detector**: Computes the set difference: `missing_skills = topK - present_skills`.
 7. **LLM Roadmap Generator**: Sends strictly the `missing_skills` to the LLM (OpenAI API) to create a structured learning roadmap. Does not infer, add, or extract skills.

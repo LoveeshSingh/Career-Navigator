@@ -83,8 +83,6 @@ public class DataSeeder implements CommandLineRunner {
 
             // Link to Role
             RoleSkills roleSkill = RoleSkills.builder()
-                    .id(new RoleSkillsId(backendRole.getId(), skill.getId()))
-                    .role(backendRole)
                     .skill(skill)
                     .priority(priorityCounter++)
                     .build();

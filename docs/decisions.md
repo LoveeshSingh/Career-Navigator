@@ -37,3 +37,12 @@
 - **Decision**: The PostgreSQL database strictly determines what skills move forward into the matching engine.
 - **Current Status**: Adopting immediately.
 - **Reason**: NLP APIs hallucinate strings or extract highly-niche, un-teachable jargon (e.g. "team player", "proactive"). By funneling the raw API outputs into a `SkillValidationService` that demands an exact match in the `Skill` or `SkillAlias` tables, we ensure that every skill presented to the user has a canonical learning path and fallback video associated with it. Any extraction failing this check is silently discarded.
+
+## 8. RoleSkills Mapping Simplification
+- **Decision**: Eradicate Hibernate Composite Keys in favor of standard UUID identifiers dynamically pointing arrays back to standard Join Columns. Unidirectional `@OneToMany(role_id)` mappings applied on the parent `Role` table.
+- **Reason**: Decouples entities logically preventing bidirectional cyclical `StackOverflow` serialization crashes. Unidirectional designs with explicit `priority` integer tracking make queries lighter.
+
+## 9. Contextual Top-K Pruning Mechanics (`SkillSelectionService`)
+- **Decision**: Cap skills shown to users via the `topK` parameter uniformly on both branch streams.
+- **Reason**: Overloading a user with 50 unorganized skills generates horrible roadmaps. Confining to `Math.min(top_k, max(20))` curates focus.
+- **Secondary Decision (Role Flow Constraints)**: The explicit Predefined Role Flow strictly skips NLP dynamic ranking and relies on our seeded `RoleSkills.priority` integer ordering. This proves stability and human-approved hierarchy over algorithmic guesses for static paths.

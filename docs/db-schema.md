@@ -61,12 +61,11 @@ Fallback learning resources (previously `learning_resources`), linked to skills 
 - **Duplicate Skills**: `UNIQUE(name)` ensures that duplicate canonical skills cannot be inserted, centralizing all variations into the `SkillAlias` table.
 
 ## Implementation Details (JPA/Hibernate)
-- **Primary Keys**: Configured using `@GeneratedValue(strategy = GenerationType.UUID)` to enable robust distributed setups.
+- **Primary Keys**: All tables (including junction mapping tables like `RoleSkills`) utilize single auto-generated `UUID` standard structures to disable Composite Key Hibernate complexity entirely.
 - **Relationships**:
   - `Skill` ↔ `SkillAlias`: `@OneToMany(mappedBy = "skill", cascade = CascadeType.ALL, orphanRemoval = true)`
   - `Skill` ↔ `SkillContent`: `@OneToMany(mappedBy = "skill", cascade = CascadeType.ALL, orphanRemoval = true)`
-  - `Role` ↔ `RoleSkills`: `@OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)`
-- **Composite Keys**: `RoleSkills` utilizes an `@EmbeddedId` mapped to `RoleSkillsId` handling the many-to-many junction properties properly.
+  - `Role` ↔ `RoleSkills`: Clean unidirectional `@OneToMany(cascade = CascadeType.ALL)` via the `role_id` column.
 - **Naming Constraints**: Java fields follow `camelCase` which Hibernate transforms into standard PostgreSQL `snake_case`. All entities use exact `@Table(name="...")` and logical column sizing via `@Column(length=X, nullable=false, unique=true)`.
 
 ## Sample Data Structure

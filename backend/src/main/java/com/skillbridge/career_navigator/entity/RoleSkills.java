@@ -14,18 +14,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class RoleSkills {
-
-    @EmbeddedId
-    private RoleSkillsId id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("roleId")
-    @JoinColumn(name = "role_id")
-    private Role role;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("skillId")
-    @JoinColumn(name = "skill_id")
+    @JoinColumn(name = "skill_id", nullable = false)
     private Skill skill;
 
     @Column(name = "priority", nullable = false)

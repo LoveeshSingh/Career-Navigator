@@ -9,6 +9,5 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface RoleSkillsRepository extends JpaRepository<RoleSkills, RoleSkillsId> {
-    List<RoleSkills> findByRoleIdOrderByPriorityAsc(UUID roleId);
+public interface RoleSkillsRepository extends JpaRepository<RoleSkills, UUID> {
 }

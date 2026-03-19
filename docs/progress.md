@@ -46,3 +46,8 @@
 - **Action**: Enforced strong consistency by querying the Database. Skills are resolved explicitly via `Skill.name` first, checking `SkillAlias.alias_name` dynamically upon failure.
 - **Action**: Handled normalization (lowercase/alphanumeric formatting) and deduplication (preventing dual aliases from producing dual master skills).
 - **Status**: Backend validation bridging complete. NLP terms can now safely integrate with the PostgreSQL dictionary.
+
+## Update: Database Mapping Refactor & Skill Selection Bounds
+- **Action**: Trashed legacy composite mappings natively decoupling `Skill` away from bidirectional reference loops internally. `Role` entity owns mapping to `RoleSkills`.
+- **Action**: Wrote `SkillSelectionService` to branch application flows efficiently: JD parsing logic sorts NLP values explicitly, while predefined DB role pathways skip math logic to parse native `priority` identifiers.
+- **Status**: Core Skill Selection Logic finalized.
