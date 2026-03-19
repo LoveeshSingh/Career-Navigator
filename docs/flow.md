@@ -22,12 +22,13 @@ The system executes one of two primary flows based on input:
   - Discard terms with no DB match.
   - Dedup aliases resolving to the same canonical `Skill` entity.
   - Return bounded `ValidatedSkillDto` preserving the original NLP importance score.
-- Select the first `k` skills from the validated ranking.
+- **Top K Selection Step**: Defer to `SkillSelectionService.selectSkillsForJd()` setting bounds on `Math.min(top_k, skills.size())` after parsing NLP rankings.
 
 ### Branch B: Role Flow
-- Fetch predefined skills mapped to the `role` from the Database (max 20).
-- Order them by stored priority.
-- Select the first `k` skills.
+- Query the database via `SkillSelectionService.selectSkillsForRole(roleId)`.
+- Extract canonical skills sequentially based entirely on the `RoleSkills.priority` native entity column ordering.
+- Deduplicate and hard-cap available baseline bounds to max `20`.
+- **Top K Selection Step**: Truncate array against `Math.min(top_k, skills.size())`.
 
 ## 3. Skill Validation
 - For each Top K skill, validate its presence in the DB.
