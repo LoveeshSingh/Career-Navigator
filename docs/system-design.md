@@ -20,8 +20,8 @@ The system is an AI Skill Gap Analyzer & Roadmap Generator, architected to be a 
 8. **Fallback Video System**: Engages only if the LLM roadmap generation fails, returning predefined YouTube videos from the DB based on the missing skills and user's level.
 
 ## Architectural Constraints
-- **NLP**: Restricted strictly to Job Description skill extraction.
-- **Resume Processing**: ALWAYS deterministic string matching. Never NLP.
-- **LLM**: Never used for skill extraction, ranking, or gap analysis. Only generates learning material roadmaps.
-- **Internal Scoring**: Exists only as a fallback resource index (e.g., retrieving level-appropriate videos), not used in the main logic flow.
+- **Parsing**: Strictly internal and rule-based. No external NLP APIs used for extraction.
+- **Resume Processing**: ALWAYS deterministic string matching.
+- **LLM**: Never used for skill extraction or gap analysis. Only generates learning material roadmaps.
+- **Internal Scoring**: Dynamically computed during JD parsing to prioritize learning paths.
 - **Skill Addition**: LLM must not invent new skills or infer unlisted skills from the missing skills.

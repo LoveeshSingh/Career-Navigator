@@ -12,17 +12,15 @@ User provides:
 The system executes one of two primary flows based on input:
 
 ### Branch A: JD Flow (Primary)
-- Send the raw JD text to the external NLP API via the `NlpSkillExtractionService` (`RestTemplate`).
-- Handle immediate network constraints (Timeout, Missing Payload) by throwing `NlpExtractionException`.
-- Parse valid API responses into `ExtractedSkillDto` objects containing a normalized `skillName` and `importanceScore`.
-- Filter out empty extractions and sort the List purely by highest to lowest `importanceScore`.
-- **Validation Step**: Pass the generic `ExtractedSkillDto` list into `SkillValidationService`.
-  - Normalize text (lowercase, alphanumeric).
-  - Search PostgreSQL: Exact match on `Skill.name`, fallback to `SkillAlias.alias_name`.
-  - Discard terms with no DB match.
-  - Dedup aliases resolving to the same canonical `Skill` entity.
-  - Return bounded `ValidatedSkillDto` preserving the original NLP importance score.
-- **Top K Selection Step**: Defer to `SkillSelectionService.selectSkillsForJd()` setting bounds on `Math.min(top_k, skills.size())` after parsing NLP rankings.
+- Send the raw JD text to the `JDParsingService`.
+- **Normalization**: JD text is normalized (lowercase, remove special characters) and split into lines.
+- **DB-Driven Matching**: The service iterates through all skills and aliases in the PostgreSQL registry.
+- **Scoring Logic**:
+  - Matches (name or alias) are identified within each line.
+  - **Context Bonus**: +10 if the line contains "required", "must", or "mandatory". +5 if it contains "preferred" or "plus".
+  - **Frequency Bonus**: +2 for every occurrence of the skill in the text.
+- **Validation**: Only skills already present in the database are extracted.
+- **Top K Selection Step**: Defer to `SkillSelectionService.selectSkillsForJd()`, which sorts skills by their computed scores descending and limits to the Top K.
 
 ### Branch B: Role Flow
 - Query the database via `SkillSelectionService.selectSkillsForRole(roleId)`.
@@ -30,47 +28,31 @@ The system executes one of two primary flows based on input:
 - Deduplicate and hard-cap available baseline bounds to max `20`.
 - **Top K Selection Step**: Truncate array against `Math.min(top_k, skills.size())`.
 
-## 3. Skill Validation
-- For each Top K skill, validate its presence in the DB.
-- Use `skill.name` and the `SkillAlias` mapping table for dictionary lookups.
-- Keep ONLY skills present in the DB.
-
-## 4. Resume Matching (Deterministic `ResumeMatchingService`)
-- **CRITICAL RESTRICTION**: Machine Learning / NLP models are entirely prohibited here to maintain exact matching limits. 
+## 3. Resume Matching (Deterministic `ResumeMatchingService`)
+- **CRITICAL RESTRICTION**: Machine Learning / NLP models are entirely prohibited here.
 - Input payload receives raw `resumeText` and explicitly truncated `topKSkills` arrays.
-- Normalize resume text (lowercase, compress spaces, strip all special characters except for contextual language symbols explicitly like `#`, `+`, or `.`).
-- Execute a solitary batch `SELECT ... WHERE skill_id IN (...)` against the `skill_alias` table for strict `O(1)` in-memory mapping boundaries.
+- Normalize resume text (lowercase, compress spaces, strip special characters).
+- Execute a solitary batch query against the `skill_alias` table.
 - For each validated Top K skill:
-  - Check if `skill.name` OR any mapped alias from the alias dictionary exists sequentially via strict word-boundary Regex string evaluation (i.e. `\bjava\b` prevents triggering true inside "JavaScript").
-  - Explicitly compartmentalize skills natively into `presentSkills` or `missingSkills` objects encapsulated within a `ResumeMatchResultDto`.
+  - Check if `skill.name` OR any mapped alias exists via strict word-boundary Regex string evaluation.
+  - Categorize into `presentSkills` or `missingSkills`.
 
-## 5. Gap Analysis
+## 4. Gap Analysis
 - Calculate missing skills using exact set difference:
   `missing_skills = topK_skills - present_skills`
 
-## 6. Roadmap Generation (LLM `RoadmapGenerationService`)
+## 5. Roadmap Generation (LLM `RoadmapGenerationService`)
 - Execute `generateRoadmap()` wrapping `missingSkills`, `level`, and `hours_per_week` into a structured prompt schema.
 - Request explicit JSON mappings representing a weekly roadmap allocation.
-- **LLM Constraints (Critical Firewall)**:
-  - Must NOT add new skills beyond the `missingSkills` array parameter.
+- **LLM Constraints**:
+  - Must NOT add new skills beyond the `missingSkills`.
   - Must NOT omit provided skills.
-  - Generates JSON structurally formatted as `{"week_X": ["skill_Y"]}`.
-- Parse payload via `ObjectMapper` and iterate map to validate NO hallucinated strings escaped system boundaries. If hallucinated sequences appear, throw `RoadmapGenerationException`.
 
-## 7. Fallback Logic (`FallbackService`)
-- This layer functions exclusively as a circuit breaker. Normal operational flows bypass this completely.
-- If the LLM integration encounters an exception or timeout:
-  - Route the exact `missingSkills` array directly into the native PostgreSQL engine.
-  - For each missing skill, attempt a strict `Map` to `SkillContent` querying for the precise user `level`.
-  - Execute a hierarchical downgrade strategy: If "INTERMEDIATE" lacks a valid URL, immediately fallback natively to "BEGINNER". 
-  - Automatically wrap the resulting array of URL maps inside a highly constrained JSON wrapper (`{"mode": "fallback", "data": [{"skill": "java", "video": "https..."}]}`).
-  - Bubble this payload fully back to the downstream client to maintain frictionless operational uptime automatically substituting standard LLM roadmaps.
+## 6. Fallback Logic (`FallbackService`)
+- Engages only if the LLM integration fails.
+- For each missing skill, attempt a strict query for the precise user `level`.
+- Hierarchical downgrade: If "INTERMEDIATE" lacks a URL, fallback to "BEGINNER".
 
-## 8. Master Endpoint Orchestrator (`RoadmapController`)
-- Evaluates native DTO logic asserting parameters (`top_k`).
-- Linearly stacks execution sequences sequentially:
-  - Validates constraints -> Triggers Branch A / Branch B depending on context.
-  - Passes aggregated canonical skill objects into `ResumeMatchingService`.
-  - Maps missing constraints against LLM mappings safely within `try/catch` enclosures.
-  - Throws custom configurations bounding standard `RoadmapGenerationException` payloads vertically into the `FallbackService`.
-  - Returns generalized `RoadmapResponseDto` universally back to the user bridging both modes dynamically.
+## 7. Master Endpoint Orchestrator (`RoadmapController`)
+- Orchestrates the sequential stacking of execution sequences.
+- Returns generalized `RoadmapResponseDto` back to the user.

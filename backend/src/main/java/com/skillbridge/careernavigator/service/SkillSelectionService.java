@@ -1,6 +1,5 @@
 package com.skillbridge.careernavigator.service;
 
-import com.skillbridge.careernavigator.dto.ValidatedSkillDto;
 import com.skillbridge.careernavigator.entity.Role;
 import com.skillbridge.careernavigator.entity.RoleSkills;
 import com.skillbridge.careernavigator.entity.Skill;
@@ -39,17 +38,17 @@ public class SkillSelectionService {
     }
 
     /**
-     * Extracts skills for the dynamic JD flow sequentially prioritized by NLP importance bounding Top K.
+     * Extracts skills for the dynamic JD flow prioritized by deterministic parsing scores Top K.
      */
-    public List<Skill> selectSkillsForJd(List<ValidatedSkillDto> validatedSkills, int topK) {
-        if (validatedSkills == null || validatedSkills.isEmpty()) {
+    public List<Skill> selectSkillsForJd(List<com.skillbridge.careernavigator.dto.ParsedSkillDto> parsedSkills, int topK) {
+        if (parsedSkills == null || parsedSkills.isEmpty()) {
             return Collections.emptyList();
         }
 
-        // Sort dynamically by NLP exact scores DESC descending into Top K truncation
-        List<Skill> availableSkills = validatedSkills.stream()
-                .sorted((a, b) -> Double.compare(b.getImportanceScore(), a.getImportanceScore()))
-                .map(ValidatedSkillDto::getSkill)
+        // Sort by computed rule-based scores DESC
+        List<Skill> availableSkills = parsedSkills.stream()
+                .sorted((a, b) -> Double.compare(b.getScore(), a.getScore()))
+                .map(com.skillbridge.careernavigator.dto.ParsedSkillDto::getSkill)
                 .distinct()
                 .collect(Collectors.toList());
 

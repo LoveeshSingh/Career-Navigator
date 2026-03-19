@@ -1,19 +1,16 @@
 package com.skillbridge.careernavigator.controller;
 
-import com.skillbridge.careernavigator.dto.ExtractedSkillDto;
 import com.skillbridge.careernavigator.dto.FallbackResponseDto;
+import com.skillbridge.careernavigator.dto.ParsedSkillDto;
 import com.skillbridge.careernavigator.dto.ResumeMatchResultDto;
 import com.skillbridge.careernavigator.dto.RoadmapRequestDto;
 import com.skillbridge.careernavigator.dto.RoadmapResponseDto;
-import com.skillbridge.careernavigator.dto.ValidatedSkillDto;
 import com.skillbridge.careernavigator.entity.Skill;
-import com.skillbridge.careernavigator.exception.RoadmapGenerationException;
 import com.skillbridge.careernavigator.service.FallbackService;
-import com.skillbridge.careernavigator.service.NlpSkillExtractionService;
+import com.skillbridge.careernavigator.service.JDParsingService;
 import com.skillbridge.careernavigator.service.ResumeMatchingService;
 import com.skillbridge.careernavigator.service.RoadmapGenerationService;
 import com.skillbridge.careernavigator.service.SkillSelectionService;
-import com.skillbridge.careernavigator.service.SkillValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +31,7 @@ import java.util.Map;
 @Validated
 public class RoadmapController {
 
-    private final NlpSkillExtractionService nlpSkillExtractionService;
-    private final SkillValidationService skillValidationService;
+    private final JDParsingService jdParsingService;
     private final SkillSelectionService skillSelectionService;
     private final ResumeMatchingService resumeMatchingService;
     private final RoadmapGenerationService roadmapGenerationService;
@@ -72,10 +68,9 @@ public class RoadmapController {
 
         // 2. Branch Mapping
         if (hasJd) {
-            // JD Flow
-            List<ExtractedSkillDto> rawSkills = nlpSkillExtractionService.extractSkillsFromJobDescription(request.getJdText());
-            List<ValidatedSkillDto> validSkills = skillValidationService.validateSkills(rawSkills);
-            selectedSkills = skillSelectionService.selectSkillsForJd(validSkills, topK);
+            // New Deterministic JD Flow
+            List<ParsedSkillDto> parsedSkills = jdParsingService.parseJobDescription(request.getJdText());
+            selectedSkills = skillSelectionService.selectSkillsForJd(parsedSkills, topK);
         } else {
             // Role Flow
             selectedSkills = skillSelectionService.selectSkillsForRole(request.getRoleId(), topK);

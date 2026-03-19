@@ -1,5 +1,6 @@
 package com.skillbridge.careernavigator.dto;
 
+import com.skillbridge.careernavigator.entity.Skill;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExtractedSkillDto {
-    private String skillName;
-    private Double importanceScore;
+public class ParsedSkillDto {
+    private Skill skill;
+    private double score;
 }

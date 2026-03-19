@@ -1,85 +1,12 @@
 # Progress Log
 
-## Update: Documentation Project Setup
-- **Action**: Created core documentation directory (`docs`).
-- **Action**: Initialized core documentation to enshrine architecture constraints.
-- **Files Created**:
-  - `system-design.md`: Documented architecture, core modules, and constraints.
-  - `flow.md`: Detailed the Execution Flow enforcing deterministic operations.
-  - `db-schema.md`: Drafted PostgreSQL source-of-truth tables.
-  - `api-spec.md`: Prepared endpoint spec placeholder.
-  - `decisions.md`: Recorded initial architectural constraints.
-  - `README.md`: Basic project landing page.
-- **Status**: Documentation configured.
+... [previous contents] ...
 
-## Update: GitHub Repository Scope Correction
-- **Action**: Resolved accidental home directory push by isolating the git repository to the `career-navigator` folder.
-- **Action**: Force-pushed the correct documentation files to overwrite the remote state.
-- **Status**: Repository scope correctly isolated. Sync complete.
-
-## Update: Database Schema Finalization
-- **Action**: Converted draft schema into production-ready `db-schema.md`.
-- **Action**: Defined strict fields, types, constraints, indexing strategies, and normalization for `Skill`, `SkillAlias`, `Role`, `RoleSkills`, and `SkillContent`.
-- **Action**: Updated `decisions.md` and `flow.md` to reflect the transition from JSONB aliases to a dedicated 3NF `SkillAlias` table.
-- **Status**: Database documentation finalized.
-
-## Update: Backend Project Structure Initialization
-- **Action**: Re-organized root Spring Boot boilerplate into isolated `/backend` directory.
-- **Action**: Wired PostgreSQL driver and configured `application.properties`.
-- **Action**: Implemented structural JPA Entities (`Skill`, `SkillAlias`, `Role`, `RoleSkills`, `SkillContent`) mapping the robust schema and enforced table keys/constraints. Setup base Spring Data REST Repository interfaces.
-- **Status**: Backend Data/JPA layer initialized.
-
-## Update: Initial Data Seeding
-- **Action**: Added `score` column to `Skill` table for fallback prioritization.
-- **Action**: Created `DataSeeder.java` (CommandLineRunner) to bootstrap the `Backend Developer` role.
-- **Action**: Seeded 10 core skills (Java, Spring Boot, etc.), 30+ normalized aliases, and matched fallback YouTube videos into `SkillContent`. Linked everything relationally via `RoleSkills`.
-- **Status**: Database seeded properly.
-
-## Update: NLP Integration Setup
-- **Action**: Populated `application.properties` with remote NLP endpoint properties (`nlp.api.url`/`nlp.api.key`).
-- **Action**: Built the Java backend wrapper (`NlpSkillExtractionService`) relying on `RestTemplate` to ping external NLP providers natively.
-- **Action**: Enforced data mapping boundaries via `ExtractedSkillDto` and bounded HTTP error tracking using `NlpExtractionException`.
-- **Status**: NLP Extraction scaffolding complete.
-
-## Update: Skill Validation Layer Implementation
-- **Action**: Built `SkillValidationService` to intercept raw NLP outputs.
-- **Action**: Enforced strong consistency by querying the Database. Skills are resolved explicitly via `Skill.name` first, checking `SkillAlias.alias_name` dynamically upon failure.
-- **Action**: Handled normalization (lowercase/alphanumeric formatting) and deduplication (preventing dual aliases from producing dual master skills).
-- **Status**: Backend validation bridging complete. NLP terms can now safely integrate with the PostgreSQL dictionary.
-
-## Update: Database Mapping Refactor & Skill Selection Bounds
-- **Action**: Trashed legacy composite mappings natively decoupling `Skill` away from bidirectional reference loops internally. `Role` entity owns mapping to `RoleSkills`.
-- **Action**: Wrote `SkillSelectionService` to branch application flows efficiently: JD parsing logic sorts NLP values explicitly, while predefined DB role pathways skip math logic to parse native `priority` identifiers.
-- **Status**: Core Skill Selection Logic finalized.
-
-## Update: Resume Matching Engine Implementation
-- **Action**: Scaffolded deterministic validation class `ResumeMatchingService`.
-- **Action**: Embedded strict regex evaluation to parse explicit boundaries (`\b...`) over the custom-cleaned user strings protecting explicit entities (`c++`).
-- **Action**: Configured N+1 optimization mechanisms within JPA via custom `findBySkillIdIn()` batch requests.
-- **Status**: Extraction bounds and set difference calculators fully mapped into generic DTOs.
-
-## Update: LLM Roadmap Generation
-- **Action**: Injected OpenAI HTTP properties via `application.properties`.
-- **Action**: Bootstrapped `RoadmapGenerationService` forcing OpenAI endpoints into standard JSON schema mode. Wrote rigid post-completion string scanners evaluating output datasets against input datasets securely.
-- **Action**: Hardened system via custom `RoadmapGenerationException` wrapper to guarantee fallback triggering.
-- **Status**: Foundational LLM roadmapping pipeline finished.
-
-## Update: Fallback Engine Implementation
-- **Action**: Implemented conditional bypass mechanism natively within `FallbackService`.
-- **Action**: Hardcoded hierarchical mapping protocols guaranteeing every single validated constraint triggers natively into the `SkillContent` DB structure seamlessly rolling "advanced" defaults down to native "beginner" configurations to ensure functional endpoints.
-- **Action**: Scaffolded deterministic return wrappers explicitly flagging `{"mode": "fallback"}` payloads for frontend contextual formatting.
-- **Status**: Reliability logic 100% embedded and error conditions natively contained seamlessly.
-
-## Update: Master REST Orchestrator
-- **Action**: Defined abstract JSON mappings utilizing `@JsonInclude` within `RoadmapRequestDto` and `RoadmapResponseDto` bounding application properties globally across contexts.
-- **Action**: Assembled all core services locally into `RoadmapController`.
-- **Action**: Created universal `/api/v1/roadmap/generate` hook tying branching conditions (JD vs Role flow) into direct Resume Set calculators pushing natively structured Generative calls shielded entirely by explicit fallback wrappers cleanly.
-- **Action**: Finalized sequence layout generating core architecture tracking records physically in `docs/api-spec.md`.
-- **Status**: Entire Backend logical system mapped. Ready for functional testing execution modes / unit testing execution.
-
-## Update: System QA, Trace Analytics & Resilience Bounds
-- **Action**: Wrote strictly isolated JUnit/Mockito suites targeting internal layers (e.g. `ResumeMatchingServiceTest`, `RoadmapGenerationServiceTest`, etc). Tracked exact regex boundary behavior, sorting alignments, LLM hallucination overriding, and database fallback cascades physically against generic mock mappings.
-- **Action**: Executed global `@WebMvcTest` wrapping inside `RoadmapControllerIntegrationTest` running physical HTTP mock pathways intercepting LLM logic payloads seamlessly mapped toward Spring error exception models automatically converting crashes natively to valid Youtube JSON objects globally.
-- **Action**: Instantiated standard `@Valid` and bounding `@NotBlank` constraints natively limiting execution depths `0 < top_k <= 20` dynamically.
-- **Action**: Wired standard `@Slf4j` system logs mapping specific sequence triggers for LLM generations, Null failures, and Circuit Breaker degradations.
-- **Status**: Backend explicitly hardened against failure contexts. Ready for final Git distribution.
+## Update: Refactor to Rule-Based JD Parsing (Deterministic)
+- **Action**: Completely removed `NlpSkillExtractionService` and associated `ExtractedSkillDto` / `nlp.api.*` configurations.
+- **Action**: Implemented `JDParsingService` as the primary JD analysis engine.
+- **Action**: Developed a deterministic scoring algorithm matching against the PostgreSQL registry (Skill + Aliases).
+- **Rule**: +10 for "required/must", +5 for "preferred", +2 per occurrence.
+- **Deduplication**: Centralized text normalization and regex boundary logic in `TextNormalizationUtils`.
+- **Status**: Backend transitioned to a cost-free, reliable, and DB-driven architecture.
+- **Documentation**: Updated `system-design.md`, `flow.md`, and `decisions.md` to reflect the new architecture.
