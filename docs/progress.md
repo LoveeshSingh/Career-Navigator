@@ -76,3 +76,10 @@
 - **Action**: Created universal `/api/v1/roadmap/generate` hook tying branching conditions (JD vs Role flow) into direct Resume Set calculators pushing natively structured Generative calls shielded entirely by explicit fallback wrappers cleanly.
 - **Action**: Finalized sequence layout generating core architecture tracking records physically in `docs/api-spec.md`.
 - **Status**: Entire Backend logical system mapped. Ready for functional testing execution modes / unit testing execution.
+
+## Update: System QA, Trace Analytics & Resilience Bounds
+- **Action**: Wrote strictly isolated JUnit/Mockito suites targeting internal layers (e.g. `ResumeMatchingServiceTest`, `RoadmapGenerationServiceTest`, etc). Tracked exact regex boundary behavior, sorting alignments, LLM hallucination overriding, and database fallback cascades physically against generic mock mappings.
+- **Action**: Executed global `@WebMvcTest` wrapping inside `RoadmapControllerIntegrationTest` running physical HTTP mock pathways intercepting LLM logic payloads seamlessly mapped toward Spring error exception models automatically converting crashes natively to valid Youtube JSON objects globally.
+- **Action**: Instantiated standard `@Valid` and bounding `@NotBlank` constraints natively limiting execution depths `0 < top_k <= 20` dynamically.
+- **Action**: Wired standard `@Slf4j` system logs mapping specific sequence triggers for LLM generations, Null failures, and Circuit Breaker degradations.
+- **Status**: Backend explicitly hardened against failure contexts. Ready for final Git distribution.
