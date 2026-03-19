@@ -12,7 +12,7 @@
   - `README.md`: Basic project landing page.
 - **Status**: Documentation configured.
 
-## Update: GitHub Repository Setup
-- **Action**: Linked local repository to `https://github.com/LoveeshSingh/Career-Navigator`.
-- **Action**: Pushed initial documentation and project structure to `main` branch.
-- **Status**: GitHub sync complete.
+## Update: GitHub Repository Scope Correction
+- **Action**: Resolved accidental home directory push by isolating the git repository to the `career-navigator` folder.
+- **Action**: Force-pushed the correct documentation files to overwrite the remote state.
+- **Status**: Repository scope correctly isolated. Sync complete.
