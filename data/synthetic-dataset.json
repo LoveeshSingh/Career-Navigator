@@ -1,30 +1,44 @@
 {
-  "roles": [
+  "test_cases": [
     {
-      "id": "866bd89e-cc9c-4831-a114-d60c056896b2",
-      "title": "Backend Developer",
-      "skills": [
-        { "name": "Java", "priority": 1, "aliases": ["Java SE", "Java EE", "JDK"] },
-        { "name": "Spring Boot", "priority": 2, "aliases": ["Spring", "Spring MVC", "Spring Security"] },
-        { "name": "PostgreSQL", "priority": 3, "aliases": ["Postgres", "SQL", "Relational Database"] },
-        { "name": "REST API", "priority": 4, "aliases": ["RESTful", "Web Services", "JSON API"] },
-        { "name": "Microservices", "priority": 5, "aliases": ["Distributed Systems", "Service-Oriented Architecture"] }
-      ]
+      "id": 1,
+      "title": "Senior Java Backend Engineer - Fintech",
+      "topK": 10,
+      "expected_match_range": "60-80%",
+      "jdText": "Position: Senior Backend Engineer (Java / Spring Boot)\nLocation: Remote / Bangalore\n\nAbout the Role:\nWe are looking for a Seasoned Backend Engineer to join our core banking squad. You will be responsible for building highly scalable microservices that process millions of transactions per second.\n\nRequirements:\n- 5+ years of experience with Java (JDK 17 preferred).\n- Expert knowledge of Spring Framework, Spring Boot, and Spring Security.\n- Strong experience with PostgreSQL and database optimization (indexing, query tuning).\n- Proven track record with Microservices architecture and RESTful API design.\n- Experience with Docker and Kubernetes for container orchestration.\n- Familiarity with CI/CD pipelines (Jenkins/GitLab CI) and cloud platforms like AWS or GCP.\n- Excellent problem-solving skills and a focus on clean, maintainable code (SOLID principles).\n\nNice to have:\n- Experience with Kafka or RabbitMQ.\n- Knowledge of GraphQL.",
+      "resumeText": "LEAD BACKEND DEVELOPER\nSummary: 7 years of expertise in Java-based system architecture and microservices development.\n\nTechnical Skills:\nLanguages: Java 8/11/17, Python, SQL\nFrameworks: Spring Boot, Spring Data JPA, Hibernate, Express.js\nDatabases: PostgreSQL, MySQL, Redis\nDevOps: Docker, Jenkins, Git, Bitbucket\nArchitecture: REST APIs, Microservices, MVC\n\nExperience Highlights:\n- Developed a real-time payment processing engine using Spring Boot and Postgres.\n- Migrated legacy monolithic services into a microservices-based architecture.\n- Optimized DB queries resulting in a 40% reduction in API response times.\n- Mentored junior developers and enforced TDD practices."
     },
     {
-      "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-      "title": "Frontend Developer",
-      "skills": [
-        { "name": "React", "priority": 1, "aliases": ["React.js", "CRA", "Next.js"] },
-        { "name": "JavaScript", "priority": 2, "aliases": ["JS", "ES6", "TypeScript"] },
-        { "name": "Tailwind CSS", "priority": 3, "aliases": ["Utility-first CSS", "Tailwind"] },
-        { "name": "Redux", "priority": 4, "aliases": ["State Management", "Redux Toolkit"] },
-        { "name": "HTML/CSS", "priority": 5, "aliases": ["Semantic HTML", "Flexbox", "Grid"] }
-      ]
+      "id": 2,
+      "title": "Frontend Architect - E-commerce",
+      "topK": 8,
+      "expected_match_range": "40-60%",
+      "jdText": "Frontend Specialist (React / TypeScript)\n\nWe need a Frontend Architect to lead the development of our next-gen headless commerce platform. You will build reusable components, manage complex state, and ensure pixel-perfect responsive designs.\n\nKey Qualifications:\n- Advanced proficiency in React.js and modern React patterns (Hooks, Context API).\n- Strong TypeScript skills are mandatory.\n- Expert in Tailwind CSS and CSS-in-JS solutions.\n- Experience with state management libraries like Redux Toolkit or Recoil.\n- Familiarity with Next.js and Server-Side Rendering (SSR).\n- Testing experience with Vitest, Jest, and Playwright.\n- Understanding of web performance optimization and accessibility (WCAG).",
+      "resumeText": "SENIOR FRONTEND ENGINEER\nCreative developer focused on building high-performance web applications with React.\n\nSkills:\nFrontend: React, JavaScript (ES6+), HTML5, CSS3, SASS, Bootstrap\nState: Redux, Context API\nBuild Tools: Webpack, Vite, NPM, Yarn\nVersion Control: Git, GitHub\n\nWork History:\n- Built a custom dashboard for data visualization using React and D3.js.\n- Implemented mobile-first designs with Bootstrap and custom CSS animations.\n- Integrated RESTful services with frontend state using Redux."
+    },
+    {
+      "id": 3,
+      "title": "Fullstack Developer - SaaS Startup",
+      "topK": 12,
+      "expected_match_range": "30-50%",
+      "jdText": "Full Stack Developer (Node.js & React)\n\nJoin our fast-paced startup to build end-to-end features for our project management tool. You will work across the entire stack, from UI components to database schemas.\n\nSkills Required:\n- Node.js and Express.js for backend services.\n- React for the frontend ecosystem.\n- Experience with MongoDB or similar NoSQL databases.\n- Proficiency in JavaScript and TypeScript.\n- Knowledge of Docker and basic cloud deployment (AWS/Heroku).\n- Experience with Firebase authentication and real-time databases.\n- Strong UI/UX sensibilities.",
+      "resumeText": "JUNIOR FULLSTACK DEVELOPER\nSelf-taught developer with a passion for building full-stack applications.\n\nTechnologies:\nBackend: JavaScript, Node.js, Express, MongoDB\nFrontend: React, HTML, CSS, Tailwind CSS\nTools: Git, Postman, MongoDB Compass\n\nProjects:\n- E-commerce Store: Built using React and Node.js with Stripe integration.\n- Real-time Chat App: Used Socket.io and Firebase for live messaging.\n- Personal Portfolio: Responsive design built with Tailwind CSS."
+    },
+    {
+      "id": 4,
+      "title": "DevOps Engineer - Infrastructure",
+      "topK": 10,
+      "expected_match_range": "50-70%",
+      "jdText": "Role: DevOps / Site Reliability Engineer\n\nWe are scaling our infrastructure and need an expert to automate everything. You will manage our cloud footprint and ensure 99.9% uptime.\n\nCore Responsibilities:\n- Manage AWS infrastructure components (EC2, S3, RDS, Lambda).\n- Implement Infrastructure as Code (IaC) using Terraform or CloudFormation.\n- Manage Kubernetes clusters (EKS/GKE).\n- Build and maintain Jenkins or GitHub Actions pipelines.\n- Monitor system health using Prometheus, Grafana, or ELK stack.\n- Implement security best practices and compliance controls.\n- Scripting with Python, Bash, or Go.",
+      "resumeText": "SRE / DEVOPS TECHNICIAN\nInfrastructure specialist focused on automation and CI/CD.\n\nExperience:\n- Set up CI/CD pipelines using GitHub Actions for various Node.js projects.\n- Managed AWS EC2 instances and S3 buckets for static site hosting.\n- Experience with Bash scripting for server automation.\n- Familiarity with Docker containerization and Docker Hub."
+    },
+    {
+      "id": 5,
+      "title": "Data Engineer - Analytics Platform",
+      "topK": 15,
+      "expected_match_range": "20-40%",
+      "jdText": "Data Engineer (Python / Spark / SQL)\n\nWe need a Data Engineer to build multi-terabyte data pipelines and manage our modern data stack. You will be responsible for ETL processes and data warehousing architecture.\n\nRequirements:\n- Strong Python programming skills (NumPy, Pandas, PySpark).\n- Experience with Big Data technologies: Apache Spark, Hadoop, or Flink.\n- Expert in SQL and data warehouse design (Snowflake, BigQuery, or Redshift).\n- Experience with workflow orchestration tools like Airflow or Prefect.\n- Familiarity with data modeling and governance.\n- Basic knowledge of Scala or Java is a plus.",
+      "resumeText": "DATA ANALYST\nDetail-oriented analyst transitioning into data engineering.\n\nSkills:\nLanguages: Python, SQL, R\nTools: Tableau, Excel, PowerBI, Jupyter Notebooks\nDatabases: MySQL, SQL Server\nLibraries: Pandas, Matplotlib, Scikit-learn\n\nAccomplishments:\n- Automated monthly reporting using Python and Pandas, saving 20 hours per month.\n- Designed complex SQL queries to extract insights from transactional data.\n- Built a customer segmentation model using k-means clustering."
     }
-  ],
-  "sample_resume_segments": [
-    "I am a proficient Java developer with experience in Spring and Postgres.",
-    "Skilled in building RESTful APIs and managing state with Redux."
   ]
 }
