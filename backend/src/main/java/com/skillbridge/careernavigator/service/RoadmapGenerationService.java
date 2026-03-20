@@ -55,7 +55,7 @@ public class RoadmapGenerationService {
 
         String prompt = buildPrompt(skillNames, level, hoursPerWeek, role);
 
-        // Simple Schema: { "contents": [{ "parts": [{ "text": "..." }] }] }
+        // Simple Schema: { "contents": [...], "generationConfig": { "responseMimeType": "application/json" } }
         Map<String, Object> requestBody = new HashMap<>();
         Map<String, Object> textPart = new HashMap<>();
         textPart.put("text", prompt);
@@ -63,6 +63,11 @@ public class RoadmapGenerationService {
         Map<String, Object> contentPart = new HashMap<>();
         contentPart.put("parts", Collections.singletonList(textPart));
         requestBody.put("contents", Collections.singletonList(contentPart));
+
+        // Force Gemini to return valid, properly-escaped JSON
+        Map<String, Object> generationConfig = new HashMap<>();
+        generationConfig.put("responseMimeType", "application/json");
+        requestBody.put("generationConfig", generationConfig);
 
         // API Key is passed via Query Parameter
         String fullUrl = llmApiUrl + "?key=" + llmApiKey;
