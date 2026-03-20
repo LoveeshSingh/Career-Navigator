@@ -41,3 +41,4 @@ desktop.ini
 **/application*.properties
 **/application*.yml
 **/check_models.py
+docs/demo-script.md
