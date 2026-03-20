@@ -73,7 +73,7 @@ class RoadmapGenerationServiceTest {
                 .thenReturn(expectedOutput);
 
         // Act
-        Map<String, Object> roadmap = roadmapGenerationService.generateRoadmap(Collections.singletonList(javaSkill), "beginner", 10);
+        Map<String, Object> roadmap = roadmapGenerationService.generateRoadmap(Collections.singletonList(javaSkill), "beginner", 10, "Software Engineer");
 
         // Assert
         assertThat(roadmap).containsKey("roadmap_details");
@@ -90,7 +90,7 @@ class RoadmapGenerationServiceTest {
             when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(Map.class)))
                     .thenReturn(responseEntity);
 
-            roadmapGenerationService.generateRoadmap(Collections.singletonList(javaSkill), "beginner", 10);
+            roadmapGenerationService.generateRoadmap(Collections.singletonList(javaSkill), "beginner", 10, "Software Engineer");
         });
     }
 
@@ -100,7 +100,7 @@ class RoadmapGenerationServiceTest {
             when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(Map.class)))
                     .thenThrow(new RestClientException("Timeout"));
 
-            roadmapGenerationService.generateRoadmap(Collections.singletonList(javaSkill), "beginner", 10);
+            roadmapGenerationService.generateRoadmap(Collections.singletonList(javaSkill), "beginner", 10, "Software Engineer");
         });
     }
 }

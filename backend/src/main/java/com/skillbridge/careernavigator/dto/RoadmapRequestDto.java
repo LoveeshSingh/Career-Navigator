@@ -18,6 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class RoadmapRequestDto {
     private UUID roleId;
+    private String role;
     private String jdText;
 
     @NotBlank(message = "Resume text is explicitly required")

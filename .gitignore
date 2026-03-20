@@ -36,3 +36,7 @@ desktop.ini
 # Database
 *.db
 *.sqlite
+
+# Configuration (Sensitive)
+**/application.properties
+**/application.yml

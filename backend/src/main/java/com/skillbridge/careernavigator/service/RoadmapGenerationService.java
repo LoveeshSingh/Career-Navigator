@@ -31,15 +31,20 @@ public class RoadmapGenerationService {
     private String llmApiKey;
 
     public RoadmapGenerationService(ObjectMapper objectMapper) {
+        // Ensure UTF-8 for API response
         this.restTemplate = new RestTemplate();
+        this.restTemplate.getMessageConverters().add(0, new org.springframework.http.converter.StringHttpMessageConverter(java.nio.charset.StandardCharsets.UTF_8));
         this.objectMapper = objectMapper;
+        // Configure Jackson to be more lenient with AI output
+        this.objectMapper.configure(com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+        this.objectMapper.configure(com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
     }
 
     /**
      * Sends missing skills to Google Gemini using the most stable REST API format.
      * Uses robust regex-based JSON extraction to handle various response formats.
      */
-    public Map<String, Object> generateRoadmap(List<Skill> missingSkills, String level, int hoursPerWeek) {
+    public Map<String, Object> generateRoadmap(List<Skill> missingSkills, String level, int hoursPerWeek, String role) {
         if (missingSkills == null || missingSkills.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -48,13 +53,13 @@ public class RoadmapGenerationService {
                 .map(Skill::getName)
                 .collect(Collectors.toList());
 
-        String prompt = buildPrompt(skillNames, level, hoursPerWeek);
+        String prompt = buildPrompt(skillNames, level, hoursPerWeek, role);
 
         // Simple Schema: { "contents": [{ "parts": [{ "text": "..." }] }] }
         Map<String, Object> requestBody = new HashMap<>();
         Map<String, Object> textPart = new HashMap<>();
         textPart.put("text", prompt);
-        
+
         Map<String, Object> contentPart = new HashMap<>();
         contentPart.put("parts", Collections.singletonList(textPart));
         requestBody.put("contents", Collections.singletonList(contentPart));
@@ -65,58 +70,108 @@ public class RoadmapGenerationService {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
 
-        log.info("Dispatching Refined Gemini Request for {} skills at level {} with {} hrs/week", 
+        log.info("Dispatching Refined Gemini Request for {} skills at level {} with {} hrs/week",
                 missingSkills.size(), level, hoursPerWeek);
 
         try {
-            ResponseEntity<Map> response = restTemplate.exchange(
+            // Log the request payload for debugging
+            String requestJson = objectMapper.writeValueAsString(requestBody);
+            log.debug("Gemini Request Payload: {}", requestJson);
+
+            ResponseEntity<String> response = restTemplate.exchange(
                     fullUrl,
                     HttpMethod.POST,
                     new HttpEntity<>(requestBody, headers),
-                    Map.class
-            );
+                    String.class);
 
             return parseAndValidateGeminiResponse(response.getBody());
 
         } catch (Exception e) {
-            log.error("Gemini Execution or Parse Failure.", e);
+            log.error("Gemini Execution or Parse Failure. Check if API key is valid and quota is available.", e);
             throw new RoadmapGenerationException("Failed to generate AI roadmap", e);
         }
     }
 
-    private String buildPrompt(List<String> skills, String level, int hoursPerWeek) {
+    private String buildPrompt(List<String> skills, String level, int hoursPerWeek, String role) {
         String skillsList = String.join(", ", skills);
-        return String.format(
-                "You are an expert career and technical consultant. Generate a highly detailed learning roadmap for these skills: %s. " +
-                "The user is currently at a '%s' level and can commit %d hours per week. " +
-                "Provide your response STRICTLY as a JSON object with exactly these two keys:\n" +
-                "1. 'roadmap_details': A single detailed string (formatted with Markdown) that explains exactly what topics to study week-by-week (e.g., Week 1, Week 2, etc.) based on the user's available time. " +
-                "Do not use separate JSON keys for weeks; use one formatted string.\n" +
-                "2. 'suggested_certifications': A JSON list of professional certifications (from reputable providers like IBM, Google, AWS, Microsoft, Oracle, etc.) that would validate these specific skills.\n\n" +
-                "Format the 'roadmap_details' string with clear headers, bullet points, and realistic learning milestones. " +
-                "Return ONLY the JSON. No markdown code blocks, no preamble, no tailing text.",
-                skillsList, level, hoursPerWeek
-        );
+        String roleSegment = (role != null && !role.isEmpty()) ? " as a '" + role + "'" : "";
+        String prompt = String.format(
+                "You are an expert career consultant. Generate a 5-WEEK learning roadmap for these skills%s: %s. " +
+                "User level: %s, Time: %d hrs/week. " +
+                "Return ONLY a JSON object: { \"roadmap_details\": \"Markdown string\", \"suggested_certifications\": [\"String\"] }",
+                roleSegment, skillsList, level, hoursPerWeek);
+        return prompt;
     }
 
-    private Map<String, Object> parseAndValidateGeminiResponse(Map<String, Object> responseBody) throws Exception {
-        if (responseBody == null || !responseBody.containsKey("candidates")) {
-            throw new RoadmapGenerationException("Invalid Gemini response format");
+    private Map<String, Object> parseAndValidateGeminiResponse(String responseJson) throws Exception {
+        if (responseJson == null || responseJson.isEmpty()) {
+            throw new RoadmapGenerationException("Gemini returned an empty response body.");
+        }
+
+        log.debug("Full API Response: {}", responseJson);
+
+        Map<String, Object> responseBody;
+        try {
+            responseBody = objectMapper.readValue(responseJson, new TypeReference<Map<String, Object>>() {});
+        } catch (Exception e) {
+            log.error("Failed to parse top-level API response.");
+            throw e;
+        }
+
+        if (responseBody.containsKey("error")) {
+            Map<String, Object> error = (Map<String, Object>) responseBody.get("error");
+            throw new RoadmapGenerationException("Gemini API Error: " + error.get("message"));
         }
 
         List<Map<String, Object>> candidates = (List<Map<String, Object>>) responseBody.get("candidates");
+        if (candidates == null || candidates.isEmpty()) {
+            throw new RoadmapGenerationException("Gemini returned no candidates.");
+        }
+
         Map<String, Object> content = (Map<String, Object>) candidates.get(0).get("content");
         List<Map<String, Object>> parts = (List<Map<String, Object>>) content.get("parts");
         String text = (String) parts.get(0).get("text");
 
-        log.debug("Raw Gemini Response: {}", text);
-
-        // Robust JSON Extraction (handles markdown ```json ... ```)
-        String jsonText = text;
-        if (text.contains("{")) {
-            jsonText = text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1);
+        // Extract JSON block
+        String jsonText = text.trim();
+        int start = jsonText.indexOf('{');
+        int end = jsonText.lastIndexOf('}');
+        if (start != -1 && end != -1 && end > start) {
+            jsonText = jsonText.substring(start, end + 1);
         }
 
-        return objectMapper.readValue(jsonText, new TypeReference<Map<String, Object>>() {});
+        // Clean up common AI formatting artifacts
+        jsonText = jsonText.replaceAll("[\\p{Cc}&&[^\\r\\n\\t]]", ""); // Control chars
+
+        try {
+            Map<String, Object> result = objectMapper.readValue(jsonText, new TypeReference<Map<String, Object>>() {});
+            
+            // Critical Fix: Unescape literal "\n" strings that AI sometimes returns instead of real newlines
+            if (result.containsKey("roadmap_details") && result.get("roadmap_details") instanceof String) {
+                String details = (String) result.get("roadmap_details");
+                details = details.replace("\\n", "\n").replace("\\\"", "\"");
+                result.put("roadmap_details", details);
+            }
+            
+            return result;
+        } catch (Exception e) {
+            log.error("CRITICAL: JSON Parse Failure. Full extracted text for debugging: \n[[---START---]]\n{}\n[[---END---]]", jsonText);
+            
+            int errorOffset = -1;
+            if (e instanceof com.fasterxml.jackson.core.JsonParseException) {
+                errorOffset = (int) ((com.fasterxml.jackson.core.JsonParseException) e).getLocation().getCharOffset();
+            }
+            
+            if (errorOffset != -1 && errorOffset < jsonText.length()) {
+                int startSnippet = Math.max(0, errorOffset - 100);
+                int endSnippet = Math.min(jsonText.length(), errorOffset + 100);
+                log.error("JSON Error Detail: Offset {}. Snippet: ...{} >>>|{}|<<< {}...", 
+                    errorOffset, 
+                    jsonText.substring(startSnippet, errorOffset),
+                    jsonText.charAt(errorOffset),
+                    jsonText.substring(errorOffset + 1, endSnippet));
+            }
+            throw e;
+        }
     }
 }
