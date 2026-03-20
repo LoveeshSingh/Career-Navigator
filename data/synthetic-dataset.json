@@ -1,0 +1,30 @@
+{
+  "roles": [
+    {
+      "id": "866bd89e-cc9c-4831-a114-d60c056896b2",
+      "title": "Backend Developer",
+      "skills": [
+        { "name": "Java", "priority": 1, "aliases": ["Java SE", "Java EE", "JDK"] },
+        { "name": "Spring Boot", "priority": 2, "aliases": ["Spring", "Spring MVC", "Spring Security"] },
+        { "name": "PostgreSQL", "priority": 3, "aliases": ["Postgres", "SQL", "Relational Database"] },
+        { "name": "REST API", "priority": 4, "aliases": ["RESTful", "Web Services", "JSON API"] },
+        { "name": "Microservices", "priority": 5, "aliases": ["Distributed Systems", "Service-Oriented Architecture"] }
+      ]
+    },
+    {
+      "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "title": "Frontend Developer",
+      "skills": [
+        { "name": "React", "priority": 1, "aliases": ["React.js", "CRA", "Next.js"] },
+        { "name": "JavaScript", "priority": 2, "aliases": ["JS", "ES6", "TypeScript"] },
+        { "name": "Tailwind CSS", "priority": 3, "aliases": ["Utility-first CSS", "Tailwind"] },
+        { "name": "Redux", "priority": 4, "aliases": ["State Management", "Redux Toolkit"] },
+        { "name": "HTML/CSS", "priority": 5, "aliases": ["Semantic HTML", "Flexbox", "Grid"] }
+      ]
+    }
+  ],
+  "sample_resume_segments": [
+    "I am a proficient Java developer with experience in Spring and Postgres.",
+    "Skilled in building RESTful APIs and managing state with Redux."
+  ]
+}

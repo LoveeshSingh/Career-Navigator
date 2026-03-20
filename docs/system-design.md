@@ -1,27 +1,45 @@
-# System Design
+# System Design: Career Navigator
 
 ## Architecture Overview
-The system is an AI Skill Gap Analyzer & Roadmap Generator, architected to be a production-grade backend-driven application. It enforces deterministic resume matching and limits LLM usage purely to learning roadmap generation.
+The Career Navigator is an AI-powered Skill Gap Analyzer and Roadmap Generator designed to help developers transition between roles or match their skills against specific Job Descriptions. It uses a **Dual-Flow** approach to identify skill gaps and leverages the **Google Gemini 2.5 Flash** model to generate personalized learning paths.
 
-## Components
-- **Backend (Spring Boot Java)**: Handles business logic, NLP orchestration, and matching engine. Includes a JPA Entity Layer modeling the entire PostgreSQL database natively with full constraints and cascading behaviors.
-- **Frontend**: React + Tailwind - User interface for inputting profiles and displaying the final roadmap/video fallbacks.
-- **Database**: PostgreSQL - The absolute source of truth for all predefined skills, roles, and fallback learning resources.
+## Tech Stack
+- **Backend**: Spring Boot 3 (Java 17), Spring Data JPA, Hibernate.
+- **Frontend**: React, Tailwind CSS, Lucide React (Icons), React Markdown.
+- **AI**: Google Gemini 2.5 Flash API (REST via `RestTemplate`).
+- **Database**: PostgreSQL (Entities: `Role`, `Skill`, `RoleSkills`, `SkillAlias`).
 
-## Core Modules To Implement
-1. **Skill Registry (PostgreSQL)**: Stores valid skills, aliases, roles, and fallback videos.
-2. **NLP API Integration (JD only)**: Uses `NlpSkillExtractionService` to hit an external endpoint. It purely handles the HTTP connection, payload parsing, sorting `ExtractedSkillDto` objects by score, and bubbling up network exceptions. It performs zero business validation against the registry.
-3. **Top K Selection Layer** (`SkillSelectionService`): Truncates the valid skill arrays into focused learning bounds.
-   - For JD Flow: Dynamically sorts mapped API scores descending, plucking the top `K`.
-   - For Role Flow: Defers entirely to the native predefined `RoleSkills.priority` sequence stored in the PostgreSQL registry up to `K`.
-5. **Resume Matching Engine**: A 100% deterministic text matching component. It normalizes resume text and checks for the exact presence of `skill.name` or `skill.aliases` for the Top K skills.
-6. **Missing Skill Detector**: Computes the set difference: `missing_skills = topK - present_skills`.
-7. **LLM Roadmap Generator**: Sends strictly the `missing_skills` to the LLM (OpenAI API) to create a structured learning roadmap. Does not infer, add, or extract skills.
-8. **Fallback Video System**: Engages only if the LLM roadmap generation fails, returning predefined YouTube videos from the DB based on the missing skills and user's level.
+## Core Components
+
+### 1. Dual-Flow Discovery Layer
+The system allows two primary input methods to identify target skills:
+- **Role-Based Flow**: Fetches a predefined list of skills and priorities for a specific career path (e.g., Backend Developer) from the PostgreSQL registry.
+- **Job Description (JD) Flow**: A deterministic matching engine that identifies skills from a raw JD text by comparing it against the internal `Skill` and `SkillAlias` database.
+
+### 2. Deterministic Matching Engine (`ResumeMatchingService`)
+Unlike unpredictable NLP APIs, our matching engine is **100% deterministic**:
+- **Text Normalization**: Both the resume and skill names/aliases are normalized (lowercased, punctuation removed).
+- **Keyword Search**: Performs exact string matching for each target skill (including all its aliases) within the resume text.
+- **Accuracy**: This ensures that if a user has "Spring Boot" on their resume, it correctly matches the "Spring" skill in our database via its alias.
+
+### 3. Skill Profile Analytics
+After matching, the system computes:
+- **Match Percentage**: `(Present Skills / Target Skills) * 100`.
+- **Strengths**: A list of skills found in both the target set and the resume.
+- **Gaps (Missing Skills)**: Target skills not found in the resume, which form the basis for the roadmap.
+
+### 4. Roadmap Generation (`RoadmapGenerationService`)
+The system sends only the **Missing Skills** to the Google Gemini API:
+- **Constraint**: Strict 5-week maximum duration.
+- **Output**: Returns a structured JSON containing a detailed Markdown roadmap and a list of suggested certifications.
+- **Post-Processing**: The backend un-escapes AI-generated literal `\n` characters to ensure perfect Markdown rendering in the frontend.
 
 ## Architectural Constraints
-- **Parsing**: Strictly internal and rule-based. No external NLP APIs used for extraction.
-- **Resume Processing**: ALWAYS deterministic string matching.
-- **LLM**: Never used for skill extraction or gap analysis. Only generates learning material roadmaps.
-- **Internal Scoring**: Dynamically computed during JD parsing to prioritize learning paths.
-- **Skill Addition**: LLM must not invent new skills or infer unlisted skills from the missing skills.
+- **Zero Hallucination**: The system never "invents" skills. It only analyzes gaps against the verified internal database.
+- **LLM Boundary**: The LLM is used exclusively for pedagogical planning (roadmaps), not for skill extraction or scoring.
+- **Privacy**: `application.properties` is untracked to prevent sensitive API keys from being exposed.
+
+## Future Enhancements
+- **Fallback Video System**: Integration of YouTube API to provide curated video content for each missing skill.
+- **User Authentication**: Allowing users to save and track their roadmap progress.
+- **Multiple Resumes**: Support for comparing different resume versions against the same role.
