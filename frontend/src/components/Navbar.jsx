@@ -14,7 +14,7 @@ const Navbar = () => {
           </h1>
         </div>
         <div className="text-sm text-slate-400 hidden sm:block">
-          Elite Roadmap Engine v2.0
+          Elite Roadmap Engine
         </div>
       </div>
     </header>

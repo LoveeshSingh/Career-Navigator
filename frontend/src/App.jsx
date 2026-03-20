@@ -32,7 +32,7 @@ function App() {
       const data = await generateRoadmap(formData);
       setResult(data);
     } catch (err) {
-      setError('Failed to generate roadmap. Please check your backend connection and ensure Gemini API key is valid.');
+      setError('Failed to generate roadmap. Please check your backend connection and API configuration.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -62,7 +62,7 @@ function App() {
 
         {/* Output Display Section */}
         {result || loading ? (
-          <section className="lg:col-span-7 space-y-6 animate-in">
+          <section className="lg:col-span-7 min-w-0 space-y-6 animate-in">
             {loading ? (
               <div className="h-full min-h-[500px] flex flex-col items-center justify-center space-y-6 glass rounded-3xl">
                 <div className="relative">
@@ -70,7 +70,7 @@ function App() {
                   <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-400 animate-pulse" size={24} />
                 </div>
                 <div className="text-center">
-                  <p className="text-xl font-medium">Gemini is Crafting Your Future</p>
+                  <p className="text-xl font-medium">Crafting Your Roadmap</p>
                   <div className="flex gap-1 justify-center mt-2">
                     <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
                     <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
@@ -91,7 +91,7 @@ function App() {
       </main>
 
       <footer className="max-w-7xl mx-auto px-6 py-10 text-center text-slate-500 text-sm border-t border-slate-800/50 mt-20">
-        Powered by Career Navigator Elite Engine & Gemini 2.5 Flash
+        Powered by Career Navigator Elite Engine
       </footer>
     </div>
   );

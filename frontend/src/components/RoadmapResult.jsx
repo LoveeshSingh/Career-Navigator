@@ -101,12 +101,12 @@ const RoadmapResult = ({ result }) => {
       )}
 
       {/* Roadmap Content */}
-      <div className="glass p-8 rounded-3xl border border-white/10 shadow-2xl">
+      <div className="glass p-8 rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
         <div className="flex items-center gap-2 mb-6 border-b border-slate-700 pb-4">
           <BookOpen className="text-blue-400" size={20} />
           <h3 className="text-xl font-semibold">Your Personalized Study Plan</h3>
         </div>
-        <div className="prose prose-invert max-w-none roadmap-markdown">
+        <div className="prose prose-invert max-w-none roadmap-markdown overflow-x-auto break-words">
           {result?.data?.roadmap_details ? (
             <ReactMarkdown>{result.data.roadmap_details}</ReactMarkdown>
           ) : (
