@@ -22,13 +22,22 @@ Unlike unpredictable NLP APIs, our matching engine is **100% deterministic**:
 - **Keyword Search**: Performs exact string matching for each target skill (including all its aliases) within the resume text.
 - **Accuracy**: This ensures that if a user has "Spring Boot" on their resume, it correctly matches the "Spring" skill in our database via its alias.
 
-### 3. Skill Profile Analytics
+### 3. Unified Scoring & Priority System
+The system ensures the most relevant skills are prioritized for the Top K selection:
+- **JD Scoring Logic**:
+  - **Context Bonus**: +10 for "required/must" keywords, +5 for "preferred/plus".
+  - **Frequency Bonus**: +2 for each occurrence of the skill or its aliases.
+  - **Base Tie-breaker**: Uses the skill's global importance score from the DB as a final tie-breaker.
+- **Role Priority Logic**: 
+  - Uses the native `@OrderBy("priority ASC")` on the `RoleSkills` relationship to ensure industry-standard learning sequences.
+
+### 4. Skill Profile Analytics
 After matching, the system computes:
 - **Match Percentage**: `(Present Skills / Target Skills) * 100`.
 - **Strengths**: A list of skills found in both the target set and the resume.
 - **Gaps (Missing Skills)**: Target skills not found in the resume, which form the basis for the roadmap.
 
-### 4. Roadmap Generation (`RoadmapGenerationService`)
+### 5. Roadmap Generation (`RoadmapGenerationService`)
 The system sends only the **Missing Skills** to the Google Gemini API:
 - **Constraint**: Strict 5-week maximum duration.
 - **Output**: Returns a structured JSON containing a detailed Markdown roadmap and a list of suggested certifications.
